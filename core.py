@@ -1,5 +1,6 @@
 from PyQt5.QtCore import Qt, QRect, QSize, QObject, QPoint, pyqtProperty, pyqtSignal
 from PyQt5.QtGui import QColor
+from random import randrange
 
 # I was trying to load json with parameters here
 # But I can only use just one external lib, so...
@@ -37,11 +38,21 @@ class Rect(QObject):
         self._rect.moveTo(self._rect.topLeft() + delta)
 
     # region PROPERTIES:
-    def setColor(self, value=None):
-        if not value:
-            # TODO: create random color by spinngin HSL wheel
-            value = QColor(Qt.red)
-        self._color = value
+    def setColor(self):
+        """ Create random color """
+        # create base color for generating
+        h, s, l = 191, 178, 153
+        color = QColor()  # starting color
+        color.fromHsl(h, s, l)
+        # create random hue (less than 360)
+        newH = h + randrange(0, 360)
+        if newH >= 360:
+            newH -= 360
+        # set new hsl value
+        color.setHsl(newH, s, l)
+
+        # set new color
+        self._color = color
 
     def getColor(self):
         return self._color

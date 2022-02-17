@@ -1,0 +1,27 @@
+from PyQt5.QtGui import QPalette, QColor
+from PyQt5.QtCore import Qt
+
+darkPalette = QPalette()
+# create dark theme
+darkPalette.setColor(QPalette.Window, QColor('#323232'))
+darkPalette.setColor(QPalette.WindowText, Qt.white)
+darkPalette.setColor(QPalette.Disabled, QPalette.WindowText, QColor(255, 255, 255).darker(300))
+darkPalette.setColor(QPalette.Base, QColor("#1d212b"))
+darkPalette.setColor(QPalette.AlternateBase, QColor(152, 152, 152))
+darkPalette.setColor(QPalette.ToolTipBase, Qt.white)
+darkPalette.setColor(QPalette.ToolTipText, Qt.white)
+darkPalette.setColor(QPalette.Text, Qt.white)
+darkPalette.setColor(QPalette.Disabled, QPalette.Text, QColor(180, 180, 180))
+darkPalette.setColor(QPalette.Button, QColor("#787A5"))
+darkPalette.setColor(QPalette.Disabled, QPalette.Button, QColor(80, 80, 80))
+darkPalette.setColor(QPalette.Inactive, QPalette.Button, QColor(80, 80, 80))
+darkPalette.setColor(QPalette.Inactive, QPalette.ButtonText, QColor(40, 40, 40))
+darkPalette.setColor(QPalette.ButtonText, Qt.white)
+darkPalette.setColor(QPalette.BrightText, QColor(55, 55, 55))
+darkPalette.setColor(QPalette.Link, QColor(65, 156, 255))
+darkPalette.setColor(QPalette.Highlight, QColor(58, 136, 209, 255))
+darkPalette.setColor(QPalette.Disabled, QPalette.Highlight, QColor(116, 139, 161, 255))
+darkPalette.setColor(QPalette.HighlightedText, Qt.black)
+darkPalette.setColor(QPalette.Dark, QColor(191, 191, 191))
+darkPalette.setColor(QPalette.Midlight, QColor(35, 35, 35))
+darkPalette.setColor(QPalette.Light, QColor(20, 20, 20))

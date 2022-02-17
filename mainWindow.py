@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QMainWindow, QWidget, QApplication
-from PyQt5.QtCore import QRect, QTimer, QPoint, Qt, QSize, pyqtSignal, pyqtProperty
+from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QVBoxLayout
+from PyQt5.QtCore import QRect, QPoint, Qt,  pyqtProperty
 from PyQt5.QtGui import QPainter, QPen, QBrush, QPalette
 from PyQt5 import QtGui
 
@@ -17,6 +17,11 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__(*args, **kwargs)
         # link to the model object with all things to draw
         self.model = model
+
+        # help message
+        self.helpMessage = QLabel(text="Click–Click")
+        self.setCentralWidget(self.helpMessage)
+        self.helpMessage.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
 
         # qt's widgets didn't follow mouse without any button pressed
         # so I need to force it to track mouse movements
@@ -43,15 +48,9 @@ class MainWindow(QMainWindow):
         brush = QBrush()
         brush.setStyle(Qt.SolidPattern)
         pen = QPen(self.palette().color(QPalette.Text), 1, Qt.DashLine)
-        # draw temporary line if we moving mouse over field
-        if self._cursor and self._connectionBlueprint:
-            # create dash-style pen
-            pen.setStyle(Qt.DashLine)
-            painter.setPen(pen)
-            # draw temp line
-            painter.drawLine(self.model.rects[self._draggingRect].rect.center(), self._cursor)
         # create regular pen
         pen.setStyle(Qt.SolidLine)
+        pen.setWidth(0.4)
         painter.setPen(pen)
 
         for rect_id in range(len(self.model.rects)):
@@ -88,6 +87,16 @@ class MainWindow(QMainWindow):
             painter.setPen(pen)
             painter.drawEllipse(rect.rect.center(), self.hitpointRadius, self.hitpointRadius)
 
+        # draw temporary line if we moving mouse over field
+        if self._cursor and self._connectionBlueprint:
+            # create dash-style pen
+            pen.setStyle(Qt.DashLine)
+            pen.setWidth(1)
+            pen.setDashPattern([3, 10])
+            painter.setPen(pen)
+            # draw temp line
+            painter.drawLine(self.model.rects[self._draggingRect].rect.center(), self._cursor)
+
     def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
         """
         Key listener for one and only one function —
@@ -121,6 +130,9 @@ class MainWindow(QMainWindow):
         return None
 
     def mouseDoubleClickEvent(self, event: QtGui.QMouseEvent) -> None:
+        # hide help message
+        self.helpMessage.hide()
+
         # calculate if new rect will fit
         # create test rect and check if it will not hit anyone
         rectSize = CONFIG.get("rectSize")
@@ -159,6 +171,11 @@ class MainWindow(QMainWindow):
     def mouseMoveEvent(self, event: QtGui.QMouseEvent) -> None:
         # mark hovered rect if mouse is over any of them
         self.hoveredRect = self.foundRectWithPointInside(QPoint(event.pos()))
+        if self.hoveredRect is not None:
+            QApplication.setOverrideCursor(Qt.DragMoveCursor)
+        else:
+            QApplication.setOverrideCursor(Qt.ArrowCursor)
+
         # if we dont create connection, then we draggin!
         if not self._connectionBlueprint and self._draggingRect is not None:
             if self._cursor is not None:
