@@ -122,8 +122,15 @@ class MainWindow(QMainWindow):
 
     def mouseDoubleClickEvent(self, event: QtGui.QMouseEvent) -> None:
         # calculate if new rect will fit
-        # create new rect
-        self.model.createRect(event.localPos())
+        # create test rect and check if it will not hit anyone
+        rectSize = CONFIG.get("rectSize")
+        newRect = QRect(event.pos().x()-rectSize.width()/2,
+                        event.pos().y()-rectSize.height()/2,
+                        rectSize.width(),
+                        rectSize.height())
+        if not self.model.isHitting(rect=newRect):
+            # create new rect
+            self.model.createRect(event.localPos())
 
     def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:
         # if mouse pressed over a rect
@@ -155,10 +162,16 @@ class MainWindow(QMainWindow):
         # if we dont create connection, then we draggin!
         if not self._connectionBlueprint and self._draggingRect is not None:
             if self._cursor is not None:
-                self.model.rects[self._draggingRect].move(event.pos()-self._cursor)
+                # create future rectangle and check if it dont hit another ones
+                delta = event.pos()-self._cursor
+                rect = QRect(self.model.rects[self._draggingRect].rect)
+                newPoint = rect.topLeft()+delta
+                rect.moveTo(newPoint)
+                if not self.model.isHitting(rect, self._draggingRect):
+                    # if movement is safe - move the dragging rect
+                    self.model.rects[self._draggingRect].move(delta)
 
-
-
+        # update oldPos coordinates
         self._cursor = event.pos()
 
     # region PROPERTIES

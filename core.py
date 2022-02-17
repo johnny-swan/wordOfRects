@@ -97,3 +97,14 @@ class Model(QObject):
         # and create new links set for possible links
         self.links.append(set())
         self.somethingChanged.emit()
+
+    def isHitting(self, rect: QRect, id_: int = None):
+        """ checks if rect in this point would hit another """
+        # if any of existing rects collide with testing one
+        # then exit function with True
+        # otherwise return False (it means movement or creating is allowed)
+        for existingRect in self.rects:
+            if existingRect.rect.intersects(rect) and id_ != existingRect.id_:
+                return True
+        return False
+
